@@ -35,6 +35,7 @@ let avatarCol;
 
 let storage = [];
 let crates = [];
+
 for (let row = 0; row < map.length; row++) {
     const rowStr = map[row];
     const rowDiv = document.createElement("div");
