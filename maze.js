@@ -11,7 +11,7 @@ let avatarRow;
 let avatarCol;
 
 // Separate array for keeping track of the moving crates.
-const crates = [];
+
 
 // START HERE -----------------------------------------------------------------/
 // While the maze project only kept track of (W)alls, the player's
@@ -21,7 +21,9 @@ const crates = [];
 //
 // Write a conditional that adds Xs to the "crateRow" variable but uses
 // an "O" class for the cell. "B"
-//
+
+
+
 // Your task is to write a for loop that draws the map, taking the above cell
 // types into consideration. Keep in mind that the player and boxes will be
 // absolutely positioned (so that they can be moved) and that you'll need to
@@ -30,7 +32,40 @@ const crates = [];
 // Similarly, you'll want to draw a a storage location for both O's and X's. In
 // other words, X is a tile that has both a box and something indicating it as
 // storage at the same time.
-//
+
+let storage = [];
+for (let row = 0; row < map.length; row++) {
+    const rowStr = map[row];
+    const rowDiv = document.createElement("div");
+    rowDiv.className = "row";
+
+    let x = [];
+    crates.push(x);
+    storage.push([]);
+    for (let i = 0; i < rowStr.length; i++) {
+        let cellClass = rowStr[i];
+        const cellDiv = document.createElement("div");
+
+        cellDiv.className = "cell " + cellClass;
+
+
+        if (cellClass === "S") {
+            avatarCol = i;
+            avatarRow = row;
+        }
+
+        if (cellClass === "B") {
+            let box = crate(row, i);
+            crates[row][i] = box;
+        } else {
+            crates[row][i] = "";
+        }
+        storage[row].push(cellDiv);
+        rowDiv.appendChild(cellDiv);
+    }
+    mazeDiv.appendChild(rowDiv);
+    console.log(crates);
+}
 // Continue to STEP 2
 
 
@@ -63,7 +98,7 @@ function move(dRow, dCol) {
     const destRow = avatarRow + dRow;
     const destCol = avatarCol + dCol;
     const destCell = map[destRow][destCol];
-
+    
     // Check if there is a crate there.
     const crate = crates[destRow][destCol];
 
@@ -77,19 +112,57 @@ function move(dRow, dCol) {
     // pushes it in the correct direction. A box can not be moved if:
     // - a wall exists where it is being pushed
     // - another box exists where it is being pushed
-    //
+    
+    
+        if(crate){
+
+            const postDestRow = destRow + dRow;
+            const postDestCol = destCol + dCol;
+
+            if (map[postDestRow][postDestCol] !== "W" && map[postDestRow][postDestCol].className !== "crate" && crates[postDestRow][postDestCol] == "") {
+                crates[postDestRow][postDestCol] = crate;
+                crates[destRow][destCol] = "";
+                crate.style.top = postDestRow * delta + "px";
+                crate.style.left = postDestCol * delta + "px";
+                }
+            }
+
+            if (destCell !== "W" && crates[destRow][destCol] === "") {
+                avatarRow += dRow;
+                avatarCol += dCol;
+                redrawAvatar();
+            }
+            checkForWin();
+        }
+
+        
+
+
+
     // You will then need to move the player if the destination cell is empty.
     // Continue to STEP 3
 
-    checkForWin();
-}
+    // checkForWin();
+
 
 function checkForWin() {
     // STEP 3 -----------------------------------------------------------------/
     // Write a function that checks if the player won. A player wins when all
     // boxes are moved over all storage spaces.
+    for (let row = 0; row <map.length; row++) {
+        for (let col = 0; col < map[row].length; col++) {
+            if (crates[row][col] !== "") {
+                if(map[row][col] !== "O") {
+                    return;
+                }
+            }
+        }
+    }
+    
     youWonDiv.classList.remove("hidden");
+
 }
+
 
 document.addEventListener('keydown', (event) => {
     switch(event.key) {
@@ -111,3 +184,4 @@ document.addEventListener('keydown', (event) => {
 });
 
 youWonDiv.addEventListener("click", () => location.reload());
+
