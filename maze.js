@@ -185,4 +185,3 @@ document.addEventListener('keydown', (event) => {
 });
 
 youWonDiv.addEventListener("click", () => location.reload());
-
